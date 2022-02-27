@@ -1,0 +1,24 @@
+/**
+ * Beers public styles
+ */
+
+:root{
+ --padding: 20px;
+}
+
+.page-header {
+	padding: var(--padding);
+}
+
+.entry-header {
+	padding: var(--padding);
+	border-bottom: 1px solid currentColor;
+}
+
+.entry-title {
+	text-align: center;
+}
+
+.entry-content {
+	padding: var(--padding);
+}
