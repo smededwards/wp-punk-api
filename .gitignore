@@ -1,2 +1,9 @@
 # gitignore
+
+## Mac OS
 .DS_Store
+
+## composer
+/vendor/
+composer.lock
+.env
