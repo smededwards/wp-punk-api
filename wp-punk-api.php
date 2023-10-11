@@ -27,4 +27,5 @@ define( 'WP_PUNK_API_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WP_PUNK_API_TEXT_DOMAIN', 'wp-punk-api' );
 
 // Require plugin files
+require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api.php';
 require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api-cpt.php';
