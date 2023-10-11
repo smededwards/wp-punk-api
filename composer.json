@@ -1,0 +1,19 @@
+{
+	"name": "smededwards/wp-punk-api",
+	"description": "A plugin that connects to the Punk API, and imports the data into a Custom Post Type called Beers",
+	"type": "project",
+	"authors": [
+		{
+			"name": "Michael Edwards",
+			"email": "smededwards@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-2": {
+			"src/": "SmedEdwards\\WpPunkApi\\"
+		}
+	},
+	"require": {
+		"vlucas/phpdotenv": "^5.5"
+	}
+}
