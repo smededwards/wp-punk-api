@@ -21,3 +21,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 // Load environment variables
 $dotenv = Dotenv\Dotenv::createImmutable( __DIR__ );
 $dotenv->load();
+
+// Define constants
+define( 'WP_PUNK_API_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'WP_PUNK_API_TEXT_DOMAIN', 'wp-punk-api' );
+
+// Require plugin files
+require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api-cpt.php';
