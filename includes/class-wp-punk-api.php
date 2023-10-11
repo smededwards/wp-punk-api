@@ -92,5 +92,3 @@ class WP_Punk_API {
 		}
 	}
 }
-
-new WP_Punk_API();
