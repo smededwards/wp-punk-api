@@ -133,5 +133,3 @@ class WP_Punk_API_CPT {
 		<?php
 	}
 }
-
-new WP_Punk_API_CPT();
