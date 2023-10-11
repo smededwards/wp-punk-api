@@ -21,7 +21,8 @@ class WP_Punk_API_CPT {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'init', [ $this, 'register_post_type' ] );
+		add_action( 'init',           [ $this, 'register_post_type' ] );
+		add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
 	}
 
 	/**
@@ -69,11 +70,67 @@ class WP_Punk_API_CPT {
 			'show_in_nav_menus'   => true,
 			'publicly_queryable'  => true,
 			'has_archive'         => $name,
-			'supports'            => [ 'title' ],
+			'supports'            => [ 'title', 'editor' ],
 			'rewrite'             => [ 'slug' => $name ],
 		];
 
 		register_post_type( self::POST_TYPE, $args );
+	}
+
+	/**
+	 * Register Meta Boxes
+	 */
+	public function register_meta_boxes( $post_type ) {
+		if ( self::POST_TYPE === $post_type ) {
+			add_meta_box(
+				WP_PUNK_API_TEXT_DOMAIN . '-meta-boxes',
+				__( self::POST_TYPE_NAME_SINGULAR . ' Details', WP_PUNK_API_TEXT_DOMAIN ),
+				[ $this, 'render_meta_boxes' ],
+				self::POST_TYPE,
+				'normal',
+				'default'
+			);
+		}
+	}
+
+	/**
+	 * Render Meta Boxes
+	 */
+	public function render_meta_boxes( $post ) {
+
+		// Get the fields
+		$fields = [
+			'id',
+			'tagline',
+			'first_brewed',
+			'image_url',
+			'abv',
+			'ibu',
+			'food_pairing'
+		];
+		?>
+			<form class="wp-punk-api-form">
+				<table class="wp-punk-api-form__table">
+					<?php foreach( $fields as $field ) : ?>
+						<tr>
+							<td class="wp-punk-api-form__table__label">
+								<label for="<?php echo $field; ?>"><?php echo $field; ?></label>
+							</td>
+						</tr>
+						<tr>
+							<td class="wp-punk-api-form__table__input">
+								<input class="widefat" 
+											 type="text" 
+											 name="<?php echo $field; ?>" 
+											 id="<?php echo $field; ?>" 
+											 value="<?php echo get_post_meta( $post->ID, 'beer_' . $field, true ); ?>"
+									/>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</form>
+		<?php
 	}
 }
 

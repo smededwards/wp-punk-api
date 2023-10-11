@@ -64,9 +64,30 @@ class WP_Punk_API {
 				$beer_id = wp_insert_post( [
 					'post_title'   => $beer->name,
 					'post_name'    => sanitize_title( $beer->id . '-' . $beer->name ),
+					'post_content' => $beer->description,
 					'post_status'  => 'publish',
 					'post_type'    => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
 				] );
+
+				// Add the meta data
+				$beer_meta = [
+					'id'           => $beer->id,
+					'tagline'      => $beer->tagline,
+					'first_brewed' => $beer->first_brewed,
+					'image_url'    => $beer->image_url,
+					'abv'          => $beer->abv,
+					'ibu'          => $beer->ibu,
+				];
+
+				// convert food pairing array to string
+				$food_pairing = implode( ', ', $beer->food_pairing );
+
+				// Add the food pairing meta data
+				$beer_meta['food_pairing'] = $food_pairing;
+
+				foreach( $beer_meta as $key => $value ) {
+					update_post_meta( $beer_id, 'beer_' . $key, $value );
+				}
 			}
 		}
 	}
