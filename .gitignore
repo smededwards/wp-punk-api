@@ -7,3 +7,11 @@
 /vendor/
 composer.lock
 .env
+
+## node / npm
+/node_modules
+npm-debug.log
+package-lock.json
+
+## build
+/build/
