@@ -61,17 +61,17 @@ class WP_Punk_API_CPT {
 			'menu_position'       => 20,
 			'can_export'          => true,
 			'exclude_from_search' => false,
-			'hierarchical'        => false,
+			'hierarchical'        => true,
 			'public'              => true,
 			'show_ui'             => true,
-			'show_in_rest'        => false,
+			'show_in_rest'        => true,
 			'show_in_menu'        => true,
 			'show_in_admin_bar'   => true,
 			'show_in_nav_menus'   => true,
 			'publicly_queryable'  => true,
-			'has_archive'         => $name,
+			'has_archive'         => strtolower( $name ),
 			'supports'            => [ 'title', 'editor' ],
-			'rewrite'             => [ 'slug' => $name ],
+			'rewrite'             => [ 'slug' => strtolower( $singular_name ) ],
 		];
 
 		register_post_type( self::POST_TYPE, $args );

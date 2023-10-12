@@ -24,15 +24,18 @@ $dotenv->load();
 
 // Define constants
 define( 'WP_PUNK_API_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'WP_PUNK_API_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WP_PUNK_API_TEXT_DOMAIN', 'wp-punk-api' );
 
 // Require plugin files
 require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api.php';
+require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api-blocks.php';
 require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api-cpt.php';
 
 // Instantiate plugin classes
-$wp_punk_api     = new WP_Punk_API\WP_Punk_API();
-$wp_punk_api_cpt = new WP_Punk_API\WP_Punk_API_CPT();
+$wp_punk_api        = new WP_Punk_API\WP_Punk_API();
+$wp_punk_api_blocks = new WP_Punk_API\WP_Punk_API_Blocks();
+$wp_punk_api_cpt    = new WP_Punk_API\WP_Punk_API_CPT();
 
 // Register activation hook and flush rewrite rules
 register_activation_hook( __FILE__, function() {
@@ -42,4 +45,3 @@ register_activation_hook( __FILE__, function() {
 		// Flush rewrite rules
 		flush_rewrite_rules();
 } );
-

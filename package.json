@@ -1,0 +1,19 @@
+{
+  "name": "wp-punk-api",
+  "description": "WordPress Plugin that connects to the Punk API, and imports the data into a Custom Post Type called Beers",
+  "author": "smededwards",
+  "version": "0.0.1",
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/smededwards/wp-punk-api"
+	},
+  "main": "build/index.js",
+  "scripts": {
+    "build": "wp-scripts build includes/blocks/index.js --output-path=build",
+    "start": "wp-scripts start includes/blocks/index.js --output-path=build",
+		"format": "wp-scripts format"
+  },
+  "devDependencies": {
+		"@wordpress/scripts": "^26.14.0"
+	}
+}
