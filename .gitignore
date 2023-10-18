@@ -1,2 +1,17 @@
 # gitignore
+
+## Mac OS
 .DS_Store
+
+## composer
+/vendor/
+composer.lock
+.env
+
+## node / npm
+/node_modules
+npm-debug.log
+package-lock.json
+
+## build
+/build/
