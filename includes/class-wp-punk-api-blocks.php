@@ -32,7 +32,7 @@ class WP_Punk_API_Blocks {
 			self::BLOCK_NAME,
 			self::BLOCK_DIR . '/index.js',
 			[ 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ],
-			filemtime( self::BLOCK_DIR . '/index.js' )
+			self::BLOCK_DIR . '/index.js'
 		);
 	}
 
@@ -44,7 +44,7 @@ class WP_Punk_API_Blocks {
 			self::BLOCK_NAME . '-editor',
 			self::BLOCK_DIR . '/editor.js',
 			[ 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor' ],
-			filemtime( self::BLOCK_DIR . '/editor.js' )
+			self::BLOCK_DIR . '/editor.js'
 		);
 	}
 }
