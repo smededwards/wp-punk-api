@@ -41,7 +41,7 @@ class WP_Punk_API {
 		$api_url  = $_ENV['API_URL'];
 		$api_key  = \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE;
 		$response = wp_remote_get( $api_url . $api_key );
-		$data 	  = json_decode( wp_remote_retrieve_body( $response ) );
+		$data     = json_decode( wp_remote_retrieve_body( $response ) );
 
 		return $data;
 	}
@@ -52,15 +52,22 @@ class WP_Punk_API {
 	public function import_data() {
 
 		// Get the data from the API
-		$beers = $this->get_data();
+		$beers        = $this->get_data();
+		$meta_prefix = 'beer';
 
 		foreach( $beers as $beer ) {
 
 			// Check if the post already exists
-			$beer_exists = get_page_by_title( $beer->name, OBJECT, \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE );
+			$beer_exists = new \WP_Query( [
+				'post_type'      => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
+				'post_title'     => $beer->name,
+				'posts_per_page' => -1,
+				'meta_key'       => $meta_prefix . '_id',
+				'meta_value'     => $beer->id,
+			] );
 
 			// If the post doesn't exist, create it
-			if ( !$beer_exists ) {
+			if ( ! $beer_exists->have_posts() ) {
 				$beer_id = wp_insert_post( [
 					'post_title'   => $beer->name,
 					'post_name'    => sanitize_title( $beer->id . '-' . $beer->name ),
@@ -86,7 +93,7 @@ class WP_Punk_API {
 				$beer_meta['food_pairing'] = $food_pairing;
 
 				foreach( $beer_meta as $key => $value ) {
-					update_post_meta( $beer_id, 'beer_' . $key, $value );
+					update_post_meta( $beer_id, $meta_prefix . '_' . $key, $value );
 				}
 			}
 		}

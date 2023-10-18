@@ -12,9 +12,9 @@ class WP_Punk_API_CPT {
 	/**
 	 * Constants
 	 */
-	const POST_TYPE = 'beers';
-	const POST_TYPE_SINGULAR = 'beer';
-	const POST_TYPE_NAME = 'Beers';
+	const POST_TYPE               = 'beers';
+	const POST_TYPE_SINGULAR      = 'beer';
+	const POST_TYPE_NAME          = 'Beers';
 	const POST_TYPE_NAME_SINGULAR = 'Beer';
 
 	/**
