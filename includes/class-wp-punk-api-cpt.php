@@ -99,15 +99,11 @@ class WP_Punk_API_CPT {
 	public function render_meta_boxes( $post ) {
 
 		// Get the fields
-		$fields = [
-			'id',
-			'tagline',
-			'first_brewed',
-			'image_url',
-			'abv',
-			'ibu',
-			'food_pairing'
-		];
+		$fields      = \WP_Punk_API\WP_Punk_API::BEER_META_FIELDS;
+
+		// Meta Prefix
+		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
+
 		?>
 			<form class="wp-punk-api-form">
 				<table class="wp-punk-api-form__table">
@@ -123,7 +119,7 @@ class WP_Punk_API_CPT {
 											 type="text" 
 											 name="<?php echo $field; ?>" 
 											 id="<?php echo $field; ?>" 
-											 value="<?php echo get_post_meta( $post->ID, 'beer_' . $field, true ); ?>"
+											 value="<?php echo get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>"
 									/>
 							</td>
 						</tr>

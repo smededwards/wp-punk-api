@@ -12,7 +12,17 @@ class WP_Punk_API {
 	/**
 	 * Constants
 	 */
-	const REST_SLUG = 'punk-api';
+	const BEER_META_FIELDS = [
+		'id',
+		'tagline',
+		'first_brewed',
+		'image_url',
+		'abv',
+		'ibu',
+		'food_pairing'
+	];
+	const BEER_META_PREFIX = \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE_SINGULAR;
+	const REST_SLUG        = 'punk-api';
 
 	/**
 	 * Constructor
@@ -26,12 +36,13 @@ class WP_Punk_API {
 	 * Registers the API endpoints
 	 */
 	public function register_routes() {
-
-		// Register the route
-		register_rest_route( self::REST_SLUG, \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE, [
-			'methods'  => 'GET',
-			'callback' => [ $this, 'get_data' ],
-		] );
+		register_rest_route(
+			self::REST_SLUG, \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE, [
+				'methods'  => 'GET',
+				'callback' => [ $this, 'get_data' ],
+				'permission_callback' => '__return_true',
+			]
+		);
 	}
 
 	/**
@@ -53,7 +64,7 @@ class WP_Punk_API {
 
 		// Get the data from the API
 		$beers        = $this->get_data();
-		$meta_prefix = 'beer';
+		$meta_prefix  = self::BEER_META_PREFIX;
 
 		foreach( $beers as $beer ) {
 
@@ -76,22 +87,17 @@ class WP_Punk_API {
 					'post_type'    => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
 				] );
 
-				// Add the meta data
-				$beer_meta = [
-					'id'           => $beer->id,
-					'tagline'      => $beer->tagline,
-					'first_brewed' => $beer->first_brewed,
-					'image_url'    => $beer->image_url,
-					'abv'          => $beer->abv,
-					'ibu'          => $beer->ibu,
-				];
+				// Add the meta data BEER_META_FIELDS
+				foreach( self::BEER_META_FIELDS as $field => $value ) {
+					$beer_meta[$value] = $beer->$value;
 
-				// convert food pairing array to string
-				$food_pairing = implode( ', ', $beer->food_pairing );
+					// Convert beer meta data from array to string
+					if ( is_array( $beer_meta[$field] ) ) {
+						$beer_meta[$field] = implode( ', ', $beer_meta[$field] );
+					}
+				}
 
-				// Add the food pairing meta data
-				$beer_meta['food_pairing'] = $food_pairing;
-
+				// Add the meta data to the post
 				foreach( $beer_meta as $key => $value ) {
 					update_post_meta( $beer_id, $meta_prefix . '_' . $key, $value );
 				}
