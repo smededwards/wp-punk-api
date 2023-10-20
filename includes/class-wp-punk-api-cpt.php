@@ -23,6 +23,7 @@ class WP_Punk_API_CPT {
 	public function __construct() {
 		add_action( 'init',           [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
+		add_action( 'save_post',      [ $this, 'save_post' ] );
 	}
 
 	/**
@@ -127,5 +128,30 @@ class WP_Punk_API_CPT {
 				</table>
 			</form>
 		<?php
+	}
+
+	/**
+	 * Save Post
+	 */
+	public function save_post( $post_id ) {
+		// Check if the post being saved is of the correct post type
+		if ( self::POST_TYPE !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		// Check if the current user has permission to edit the post
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		// Save the fields
+		$fields = \WP_Punk_API\WP_Punk_API::BEER_META_FIELDS;
+		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
+
+		foreach( $fields as $field ) {
+			if ( isset( $_POST[ $field ] ) ) {
+				update_post_meta( $post_id, $meta_prefix . '_' . $field, sanitize_text_field( $_POST[ $field ] ) );
+			}
+		}
 	}
 }
