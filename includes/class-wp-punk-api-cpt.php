@@ -98,35 +98,67 @@ class WP_Punk_API_CPT {
 	 * Render Meta Boxes
 	 */
 	public function render_meta_boxes( $post ) {
-
 		// Get the fields
 		$fields      = \WP_Punk_API\WP_Punk_API::BEER_META_FIELDS;
+
+		// Set default field types
+		$field_types = [
+			'id'           => 'number',
+			'tagline'      => 'text',
+			'image_url'    => 'url',
+			'ibu'          => 'number',
+			'url'          => 'url',
+			'abv'          => 'number',
+			'food_pairing' => 'textarea',
+		];
+
+		// Capitalize keywords for the label
+		foreach( $keywords as $keyword ) {
+			$fields = array_map( function( $field ) use ( $keyword ) {
+				return str_replace( $keyword, strtoupper( $keyword ), $field );
+			}, $fields );
+		}
+
+		// Capitalize keywords in the label
+		$keywords = ['id', 'ibu', 'url', 'abv'];
 
 		// Meta Prefix
 		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
 
 		?>
-			<form class="wp-punk-api-form">
-				<table class="wp-punk-api-form__table">
-					<?php foreach( $fields as $field ) : ?>
-						<tr>
-							<td class="wp-punk-api-form__table__label">
-								<label for="<?php echo $field; ?>"><?php echo $field; ?></label>
-							</td>
-						</tr>
-						<tr>
-							<td class="wp-punk-api-form__table__input">
-								<input class="widefat" 
-											 type="text" 
-											 name="<?php echo $field; ?>" 
-											 id="<?php echo $field; ?>" 
-											 value="<?php echo get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>"
-									/>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				</table>
-			</form>
+		<table class="form-table">
+			<?php foreach( $fields as $field ) : ?>
+				<tr>
+					<th scope="row">
+						<label for="<?= $field_labels; ?>"><?= ucwords( str_replace( '_', ' ', $field ) ); ?></label>
+					</th>
+					<td>
+						<?php if ( $field_types[ $field ] === 'textarea' ) : ?>
+							<textarea class="regular-text"
+												name="<?= $field; ?>"
+												id="<?= $field; ?>"
+												rows="5"
+							>
+								<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>
+							</textarea>
+						<?php elseif ( isset( $field_types[ $field ] ) ) : ?>
+							<input class="regular-text"
+										 name="<?= $field; ?>" id="<?= $field; ?>" 
+										 type="<?= $field_types[ $field ]; ?>" 
+										 value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>"
+							>
+						<?php else : ?>
+							<input class="regular-text" 
+										 id="<?= $field; ?>" 
+										 name="<?= $field; ?>"
+										 type="text"
+										 value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>"
+							>
+						<?php endif; ?>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+		</table>
 		<?php
 	}
 

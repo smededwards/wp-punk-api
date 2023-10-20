@@ -86,14 +86,14 @@ class WP_Punk_API {
 					'post_status'  => 'publish',
 					'post_type'    => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
 				] );
+				
+				// Add the meta data
+				foreach( self::BEER_META_FIELDS as $field ) {
+					$beer_meta[ $field ] = $beer->$field;
 
-				// Add the meta data BEER_META_FIELDS
-				foreach( self::BEER_META_FIELDS as $field => $value ) {
-					$beer_meta[$value] = $beer->$value;
-
-					// Convert beer meta data from array to string
-					if ( is_array( $beer_meta[$field] ) ) {
-						$beer_meta[$field] = implode( ', ', $beer_meta[$field] );
+					// Check if the field is an array and convert it to a string
+					if ( is_array( $beer_meta[ $field ] ) ) {
+						$beer_meta[ $field ] = implode( ', ', $beer_meta[ $field ] );
 					}
 				}
 
