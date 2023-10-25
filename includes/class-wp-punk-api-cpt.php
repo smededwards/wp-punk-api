@@ -23,6 +23,7 @@ class WP_Punk_API_CPT {
 	public function __construct() {
 		add_action( 'init',           [ $this, 'register_post_type' ] );
 		add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
+		add_action( 'save_post',      [ $this, 'save_post' ] );
 	}
 
 	/**
@@ -97,39 +98,77 @@ class WP_Punk_API_CPT {
 	 * Render Meta Boxes
 	 */
 	public function render_meta_boxes( $post ) {
-
 		// Get the fields
-		$fields = [
-			'id',
-			'tagline',
-			'first_brewed',
-			'image_url',
-			'abv',
-			'ibu',
-			'food_pairing'
+		$fields      = \WP_Punk_API\WP_Punk_API::BEER_META_FIELDS;
+
+		// Set default field types
+		$field_types = [
+			'id'           => 'number',
+			'tagline'      => 'text',
+			'image_url'    => 'url',
+			'abv'          => 'number',
+			'ibu'          => 'number',
+			'food_pairing' => 'textarea',
 		];
+
+		// Capitalize keywords in the label
+		$keywords = ['id', 'abv', 'ibu' ];
+
+		// Check $fields for keywords, and convert the keyword only to uppercase
+		foreach( $fields as $field ) {
+			if ( in_array( $field, $keywords ) ) {
+				$field_labels[ $field ] = strtoupper( $field );
+			} else {
+				$field_labels[ $field ] = ucwords( str_replace( '_', ' ', $field ) );
+			}
+		}
+
+		// Meta Prefix
+		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
 		?>
-			<form class="wp-punk-api-form">
-				<table class="wp-punk-api-form__table">
-					<?php foreach( $fields as $field ) : ?>
-						<tr>
-							<td class="wp-punk-api-form__table__label">
-								<label for="<?php echo $field; ?>"><?php echo $field; ?></label>
-							</td>
-						</tr>
-						<tr>
-							<td class="wp-punk-api-form__table__input">
-								<input class="widefat" 
-											 type="text" 
-											 name="<?php echo $field; ?>" 
-											 id="<?php echo $field; ?>" 
-											 value="<?php echo get_post_meta( $post->ID, 'beer_' . $field, true ); ?>"
-									/>
-							</td>
-						</tr>
-					<?php endforeach; ?>
-				</table>
-			</form>
+		<table class="form-table">
+			<?php foreach( $fields as $field ) : ?>
+				<tr>
+					<th scope="row">
+						<label for="<?= $field; ?>"><?= $field_labels[ $field ]; ?></label>
+					</th>
+					<td>
+						<?php if ( $field_types[ $field ] === 'textarea' ) : ?>
+							<textarea class="regular-text" name="<?= $field; ?>" id="<?= $field; ?>" rows="5"><?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?></textarea>
+						<?php elseif ( isset( $field_types[ $field ] ) ) : ?>
+							<input class="regular-text" name="<?= $field; ?>" id="<?= $field; ?>" type="<?= $field_types[ $field ]; ?>" value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>">
+						<?php else : ?>
+							<input class="regular-text" id="<?= $field; ?>" name="<?= $field; ?>" type="text" value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>">
+						<?php endif; ?>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+		</table>
 		<?php
+	}
+
+	/**
+	 * Save Post
+	 */
+	public function save_post( $post_id ) {
+		// Check if the post being saved is of the correct post type
+		if ( self::POST_TYPE !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		// Check if the current user has permission to edit the post
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		// Save the fields
+		$fields = \WP_Punk_API\WP_Punk_API::BEER_META_FIELDS;
+		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
+
+		foreach( $fields as $field ) {
+			if ( isset( $_POST[ $field ] ) ) {
+				update_post_meta( $post_id, $meta_prefix . '_' . $field, sanitize_text_field( $_POST[ $field ] ) );
+			}
+		}
 	}
 }
