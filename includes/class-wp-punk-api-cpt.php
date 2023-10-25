@@ -106,54 +106,39 @@ class WP_Punk_API_CPT {
 			'id'           => 'number',
 			'tagline'      => 'text',
 			'image_url'    => 'url',
-			'ibu'          => 'number',
-			'url'          => 'url',
 			'abv'          => 'number',
+			'ibu'          => 'number',
 			'food_pairing' => 'textarea',
 		];
 
-		// Capitalize keywords for the label
-		foreach( $keywords as $keyword ) {
-			$fields = array_map( function( $field ) use ( $keyword ) {
-				return str_replace( $keyword, strtoupper( $keyword ), $field );
-			}, $fields );
-		}
-
 		// Capitalize keywords in the label
-		$keywords = ['id', 'ibu', 'url', 'abv'];
+		$keywords = ['id', 'abv', 'ibu' ];
+
+		// Check $fields for keywords, and convert the keyword only to uppercase
+		foreach( $fields as $field ) {
+			if ( in_array( $field, $keywords ) ) {
+				$field_labels[ $field ] = strtoupper( $field );
+			} else {
+				$field_labels[ $field ] = ucwords( str_replace( '_', ' ', $field ) );
+			}
+		}
 
 		// Meta Prefix
 		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
-
 		?>
 		<table class="form-table">
 			<?php foreach( $fields as $field ) : ?>
 				<tr>
 					<th scope="row">
-						<label for="<?= $field_labels; ?>"><?= ucwords( str_replace( '_', ' ', $field ) ); ?></label>
+						<label for="<?= $field; ?>"><?= $field_labels[ $field ]; ?></label>
 					</th>
 					<td>
 						<?php if ( $field_types[ $field ] === 'textarea' ) : ?>
-							<textarea class="regular-text"
-												name="<?= $field; ?>"
-												id="<?= $field; ?>"
-												rows="5"
-							>
-								<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>
-							</textarea>
+							<textarea class="regular-text" name="<?= $field; ?>" id="<?= $field; ?>" rows="5"><?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?></textarea>
 						<?php elseif ( isset( $field_types[ $field ] ) ) : ?>
-							<input class="regular-text"
-										 name="<?= $field; ?>" id="<?= $field; ?>" 
-										 type="<?= $field_types[ $field ]; ?>" 
-										 value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>"
-							>
+							<input class="regular-text" name="<?= $field; ?>" id="<?= $field; ?>" type="<?= $field_types[ $field ]; ?>" value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>">
 						<?php else : ?>
-							<input class="regular-text" 
-										 id="<?= $field; ?>" 
-										 name="<?= $field; ?>"
-										 type="text"
-										 value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>"
-							>
+							<input class="regular-text" id="<?= $field; ?>" name="<?= $field; ?>" type="text" value="<?= get_post_meta( $post->ID, $meta_prefix . '_' . $field, true ); ?>">
 						<?php endif; ?>
 					</td>
 				</tr>
