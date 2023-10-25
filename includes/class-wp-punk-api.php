@@ -15,7 +15,6 @@ class WP_Punk_API {
 	const BEER_META_FIELDS = [
 		'id',
 		'tagline',
-		'first_brewed',
 		'image_url',
 		'abv',
 		'ibu',
