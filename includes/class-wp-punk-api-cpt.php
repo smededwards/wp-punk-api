@@ -71,7 +71,7 @@ class WP_Punk_API_CPT {
 			'show_in_nav_menus'   => true,
 			'publicly_queryable'  => true,
 			'has_archive'         => strtolower( $name ),
-			'supports'            => [ 'title', 'editor' ],
+			'supports'            => [ 'title', 'editor', 'thumbnail' ],
 			'rewrite'             => [ 'slug' => strtolower( $singular_name ) ],
 		];
 
@@ -105,11 +105,15 @@ class WP_Punk_API_CPT {
 		$field_types = [
 			'id'           => 'number',
 			'tagline'      => 'text',
-			'image_url'    => 'url',
 			'abv'          => 'number',
 			'ibu'          => 'number',
 			'food_pairing' => 'textarea',
 		];
+
+		// Filter out the image_url filed, as it's not needed
+		$fields = array_filter( $fields, function( $field ) {
+			return 'image_url' !== $field;
+		} );
 
 		// Capitalize keywords in the label
 		$keywords = ['id', 'abv', 'ibu' ];
