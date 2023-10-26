@@ -21,7 +21,7 @@ class WP_Punk_API {
 		'food_pairing'
 	];
 	const BEER_META_PREFIX = \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE_SINGULAR;
-	const REST_SLUG        = 'punk-api';
+	const REST_SLUG        = WP_PUNK_API_CLI_REST_SLUG;
 
 	/**
 	 * Constructor
