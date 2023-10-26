@@ -21,13 +21,13 @@ class WP_Punk_API {
 		'food_pairing'
 	];
 	const BEER_META_PREFIX = \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE_SINGULAR;
-	const REST_SLUG        = 'punk-api';
+	const REST_SLUG        = WP_PUNK_API_CLI_REST_SLUG;
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init',    [ $this, 'import_data' ] );
+		// add_action( 'admin_init',    [ $this, 'import_data' ] );
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
@@ -99,8 +99,85 @@ class WP_Punk_API {
 				// Add the meta data to the post
 				foreach( $beer_meta as $key => $value ) {
 					update_post_meta( $beer_id, $meta_prefix . '_' . $key, $value );
+
+					// Check if the field is an image
+					if ( isset ( $beer_meta['image_url'] ) ) {
+						// Import the image
+						$image_id = $this->import_image( $value, $beer_id );
+					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Import Images to the Media Library and attach them to the post
+	 */
+	public function import_image( $image_url, $beer_id ) {
+		// Check if the image exists
+		$image_exists = new \WP_Query( [
+			'post_type'      => 'attachment',
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			'meta_key'       => '_wp_attachment_metadata',
+			'meta_value'     => $image_url,
+		] );
+
+		// If the image doesn't exist, import it
+		if ( ! $image_exists->have_posts() ) {
+			
+			// Get the file name
+			$file_name = basename( $image_url );
+
+			// Get the file
+			$response = wp_remote_get( $image_url );
+
+			// Check for errors
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+
+			// Get the file contents
+			$file = wp_remote_retrieve_body( $response );
+
+			// Check for errors
+			if ( is_wp_error( $file ) ) {
+				return $file;
+			}
+
+			// Upload the file
+			$upload = wp_upload_bits( $file_name, null, $file );
+
+			// Check for errors
+			if ( is_wp_error( $upload ) ) {
+				return $upload;
+			}
+
+			// Get the file path
+			$file_path = $upload['file'];
+
+			// Get the file type
+			$file_type = wp_check_filetype( $file_name, null );
+
+			// Set up the attachment meta data to fake a successful upload
+			$attachment = [
+				'post_mime_type' => $file_type['type'],
+				'post_title'     => preg_replace( '/\.[^.]+$/', '', $file_name ),
+				'post_content'   => '',
+				'post_status'    => 'inherit',
+				'guid'           => $upload['url'],
+			];
+
+			// Create the attachment
+			$attach_id = wp_insert_attachment( $attachment, $file_path, $beer_id );
+
+			// Generate the metadata for the attachment
+			$attach_data = wp_generate_attachment_metadata( $attach_id, $file_path );
+
+			// Set the featured image
+			set_post_thumbnail( $beer_id, $attach_id );
+		}
+
+		return $attach_id;
 	}
 }

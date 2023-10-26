@@ -11,3 +11,6 @@ WordPress Plugin that connects to the Punk API, and imports the data into a Cust
 5. Finally run `npm run build` in the plugin directory to build the assets
 6. Activate the plugin through the 'Plugins' menu in WordPress
 7. The plugin will create a new Custom Post Type called Beers and import the data from the Punk API
+
+## CLI Command
+You can run `wp punk-api import` from the plugin directory to import and update the data from the Punk API
