@@ -27,7 +27,7 @@ class WP_Punk_API {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_init',    [ $this, 'import_data' ] );
+		// add_action( 'admin_init',    [ $this, 'import_data' ] );
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
