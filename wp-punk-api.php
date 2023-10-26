@@ -40,11 +40,12 @@ $wp_punk_api_blocks = new WP_Punk_API\WP_Punk_API_Blocks();
 $wp_punk_api_cli    = new WP_Punk_API\WP_Punk_API_CLI();
 $wp_punk_api_cpt    = new WP_Punk_API\WP_Punk_API_CPT();
 
-// Register activation hook and flush rewrite rules
+// Register activation hook
 register_activation_hook( __FILE__, function() {
-		// Register post type
-		$wp_punk_api_cpt->register_post_type();
-	
+} );
+
+// Register deactivation hook
+register_deactivation_hook( __FILE__, function() {
 		// Flush rewrite rules
 		flush_rewrite_rules();
 } );

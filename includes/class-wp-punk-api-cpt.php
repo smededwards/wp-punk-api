@@ -21,9 +21,10 @@ class WP_Punk_API_CPT {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'init',           [ $this, 'register_post_type' ] );
-		add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
-		add_action( 'save_post',      [ $this, 'save_post' ] );
+		add_action( 'init',             [ $this, 'register_post_type' ] );
+		add_action( 'add_meta_boxes',   [ $this, 'register_meta_boxes' ] );
+		add_action( 'save_post',        [ $this, 'save_post' ] );
+		add_filter( 'template_include', [ $this, 'template_include' ] );
 	}
 
 	/**
@@ -31,7 +32,7 @@ class WP_Punk_API_CPT {
 	 */
 	public function register_post_type() {
 		$name          = self::POST_TYPE_NAME;
-		$singular_name = self::POST_TYPE_SINGULAR;
+		$singular_name = self::POST_TYPE_NAME_SINGULAR;
 
 		$labels = [
 			'name'                  => __( $name, WP_PUNK_API_TEXT_DOMAIN ),
@@ -174,5 +175,33 @@ class WP_Punk_API_CPT {
 				update_post_meta( $post_id, $meta_prefix . '_' . $field, sanitize_text_field( $_POST[ $field ] ) );
 			}
 		}
+	}
+
+	/**
+	 * Include the template file from the plugin
+	 */
+	public function template_include( $template ) {
+
+		// Check if the file exists in the theme
+		if ( file_exists( get_stylesheet_directory() . '/single-' . self::POST_TYPE_SINGULAR . '.php' ) ) {
+			return $template;
+		}
+
+		// Check if archive file is in the theme
+		if ( file_exists( get_stylesheet_directory() . '/archive-' . self::POST_TYPE . '.php' ) ) {
+			return $template;
+		}
+
+		// Check if the file exists in the plugin
+		if ( is_singular( self::POST_TYPE ) ) {
+			$template = WP_PUNK_API_PLUGIN_DIR . 'templates/single-' . self::POST_TYPE_SINGULAR . '.php';
+		}
+
+		// Check if archive file is in the plugin
+		if ( is_post_type_archive( self::POST_TYPE ) ) {
+			$template = WP_PUNK_API_PLUGIN_DIR . 'templates/archive-' . self::POST_TYPE . '.php';
+		}
+
+		return $template;
 	}
 }
