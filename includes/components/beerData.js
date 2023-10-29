@@ -3,7 +3,6 @@
  * 
  * This component is used to get the data list of beers from the Custom Post Type
  */
-import { RawHTML } from '@wordpress/element';
 import { select } from '@wordpress/data';
 
 const BeerData = () => {
@@ -31,11 +30,10 @@ const BeerData = () => {
 		} );
 	}
 
-	// Convert HTML entities to HTML
 	beers.forEach( beer => {
-		beer.label = <RawHTML>{ beer.title }</RawHTML>;
-		beer.title = <RawHTML>{ beer.title }</RawHTML>;
-		beer.description = <RawHTML>{ beer.description }</RawHTML>;
+		beer.label = beer.title;
+		beer.title = beer.title;
+		beer.description = beer.description.replace( /(<([^>]+)>)/ig, '' );
 	} );
 
 	return {

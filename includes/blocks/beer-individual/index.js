@@ -97,8 +97,6 @@ registerBlockType("wp-punk-api/beer-individual", {
 			} );
 		};
 
-
-
 		return (
 			<Fragment>
 				<InspectorControls>
