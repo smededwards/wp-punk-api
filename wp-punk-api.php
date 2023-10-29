@@ -15,6 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
   exit;
 }
 
+// If the class already exists, bail
+if ( class_exists( 'WP_Punk_API' ) ) {
+	return;
+}
+
 // Require composer autoload
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -46,6 +51,6 @@ register_activation_hook( __FILE__, function() {
 
 // Register deactivation hook
 register_deactivation_hook( __FILE__, function() {
-		// Flush rewrite rules
-		flush_rewrite_rules();
+	// Flush rewrite rules
+	flush_rewrite_rules();
 } );

@@ -27,7 +27,6 @@ class WP_Punk_API {
 	 * Constructor
 	 */
 	public function __construct() {
-		// add_action( 'admin_init',    [ $this, 'import_data' ] );
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
@@ -60,7 +59,6 @@ class WP_Punk_API {
 	 * Import data from the API
 	 */
 	public function import_data() {
-
 		// Get the data from the API
 		$beers        = $this->get_data();
 		$meta_prefix  = self::BEER_META_PREFIX;
@@ -85,7 +83,7 @@ class WP_Punk_API {
 					'post_status'  => 'publish',
 					'post_type'    => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
 				] );
-				
+
 				// Add the meta data
 				foreach( self::BEER_META_FIELDS as $field ) {
 					$beer_meta[ $field ] = $beer->$field;
