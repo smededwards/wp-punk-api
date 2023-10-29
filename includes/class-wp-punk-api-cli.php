@@ -12,7 +12,6 @@ class WP_Punk_API_CLI {
 	/**
 	 * Constants
 	 */
-	// this is WP_PUNK_API_CLI_REST_SLUG
 	const CLI_PREFIX = WP_PUNK_API_CLI_REST_SLUG;
 
 	/**
@@ -28,13 +27,17 @@ class WP_Punk_API_CLI {
 	public function register_commands() {
 		// This command will run the import_data() method from the WP_Punk_API class
 		\WP_CLI::add_command( self::CLI_PREFIX . ' import', [ $this, 'import_data' ] );
+		\WP_CLI::add_command( self::CLI_PREFIX . ' delete', [ $this, 'delete_data' ] );
 	}
 
 	/**
 	 * Imports data from the API
 	 */
 	public function import_data() {
-		// Get Post Details.
+		// Staring the import
+		\WP_CLI::line( 'Getting the round in...' );
+
+		// Get Post Details
 		$wp_punk_api     = new WP_Punk_API();
 		$beer_data       = $wp_punk_api->get_data();
 		$beer_import     = $wp_punk_api->import_data();
@@ -42,12 +45,10 @@ class WP_Punk_API_CLI {
 		$progress        = \WP_CLI\Utils\make_progress_bar( 'Generating Posts', $desired_posts );
 		$posts_generated = 0;
 
-		\WP_CLI::line( 'Getting the round in...' );
-
 		// Run import_data method from WP_Punk_API class
 		foreach ( $beer_data as $beer ) {
-			$beer_import = $wp_punk_api->import_data( $beer );
 			$progress->tick();
+			$beer_import = $wp_punk_api->import_data( $beer );
 			$posts_generated++;
 
 			// Break out of loop if we've generated the desired number of posts
@@ -68,5 +69,39 @@ class WP_Punk_API_CLI {
 
 		// Success message
 		\WP_CLI::success( 'Beers generated: ' . $posts_generated . '/' . $desired_posts );
+	}
+
+	/**
+	 * Delete data
+	 */
+	public function delete_data() {
+		\WP_CLI::line( 'Deleting all Beers...' );
+
+		$post_count      = wp_count_posts( \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE );
+		$progress        = \WP_CLI\Utils\make_progress_bar( 'Generating Posts', $desired_posts );
+		$posts_deleted = 0;
+
+		$beer_posts = new \WP_Query( [
+			'post_type'      => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
+			'posts_per_page' => -1,
+			'post_status'    => [ 'publish', 'trash' ]
+		] );
+
+		foreach ( $beer_posts->posts as $beer_post ) {
+			$progress->tick();
+			wp_delete_post( $beer_post->ID, true );
+			$posts_deleted++;
+
+			// Break out of loop if we've deleted the desired number of posts
+			if ( $posts_deleted === $post_count->publish ) {
+				break;
+			}
+		}
+
+		// Finish progress bar
+		$progress->finish();
+
+		// Success message
+		\WP_CLI::success( 'All Beers deleted' );
 	}
 }
