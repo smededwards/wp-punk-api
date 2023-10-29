@@ -104,7 +104,6 @@ class WP_Punk_API_CPT {
 
 		// Set default field types
 		$field_types = [
-			'id'           => 'number',
 			'tagline'      => 'text',
 			'abv'          => 'number',
 			'ibu'          => 'number',
@@ -113,11 +112,12 @@ class WP_Punk_API_CPT {
 
 		// Filter out the image_url filed, as it's not needed
 		$fields = array_filter( $fields, function( $field ) {
-			return 'image_url' !== $field;
+			$disallowed_fields = [ 'image_url', 'id' ];
+			return ! in_array( $field, $disallowed_fields );
 		} );
 
 		// Capitalize keywords in the label
-		$keywords = ['id', 'abv', 'ibu' ];
+		$keywords = ['abv', 'ibu' ];
 
 		// Check $fields for keywords, and convert the keyword only to uppercase
 		foreach( $fields as $field ) {
