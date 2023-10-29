@@ -6,6 +6,7 @@ import { registerBlockType } from "@wordpress/blocks"
 import { PanelBody, PanelRow, SelectControl, Spinner } from "@wordpress/components"
 import { Fragment, useEffect, useState } from "@wordpress/element"
 import { InspectorControls } from "@wordpress/block-editor"
+import { AlignmentToolbar, BlockControls } from "@wordpress/block-editor"
 
 /**
  * Internal dependencies
@@ -40,15 +41,21 @@ registerBlockType("wp-punk-api/beer-individual", {
 		beerUrl: {
 			type: "string",
 			default: "",
+		},
+		textAlign: {
+			type: "string",
+			default: "left",
 		}
 	},
 	edit: ( props ) => {
 		const { attributes, setAttributes } = props;
-		const { beerId, beerName, beerDescription } = attributes;
+		const { beerId, beerName, beerDescription, textAlign } = attributes;
 
 		const beers = BeerData();
 		const [ beerData, setBeerData ] = useState();
 		const [ isLoading, setIsLoading ] = useState(true);
+		// Set the text alignment
+		const onTextAlignChange = ( textAlign ) => setAttributes( { textAlign } );
 
 		// Set the beer data once it's loaded
 		useEffect( () => { setBeerData( beers ); setIsLoading( false ); }, [ beers ] );
@@ -90,6 +97,8 @@ registerBlockType("wp-punk-api/beer-individual", {
 			} );
 		};
 
+
+
 		return (
 			<Fragment>
 				<InspectorControls>
@@ -103,25 +112,40 @@ registerBlockType("wp-punk-api/beer-individual", {
 							/>
 						</PanelRow>
 					</PanelBody>
+					<PanelBody title={ __( "Text Settings", "wp-punk-api" ) }>
+						<PanelRow>
+							<p>{ __( "Alignment", "wp-punk-api" ) }</p>
+							<AlignmentToolbar
+								value={ textAlign }
+								onChange={ onTextAlignChange }
+							/>
+						</PanelRow>
+					</PanelBody>
 				</InspectorControls>
+				<BlockControls>
+					<AlignmentToolbar
+						value={ textAlign }
+						onChange={ onTextAlignChange }
+					/>
+				</BlockControls>
 				<div className="wp-punk-api__beer-individual">
 					{ !beerName && <p>{ __( "Please select a beer...", "wp-punk-api" ) }</p> }
-					<h2 className="wp-punk-api__beer-individual-title">{ beerName }</h2>
-					<p className="wp-punk-api__beer-individual-description">{ beerDescription }</p>
+					<h2 className="wp-punk-api__beer-individual-title" style={ { textAlign: textAlign } }>{ beerName }</h2>
+					<p className="wp-punk-api__beer-individual-description" style={ { textAlign: textAlign } }>{ beerDescription }</p>
 				</div>
 			</Fragment>
 		);
 	},
 	save: ( props ) => {
 		const { attributes } = props;
-		const { beerName, beerDescription, beerUrl } = attributes;
+		const { beerName, beerDescription, beerUrl, textAlign } = attributes;
 
 		return (
 			<div className="wp-punk-api__beer-individual">
-				<a href={ beerUrl } className="wp-punk-api__beer-individual-link">
-					<h2 className="wp-punk-api__beer-individual-title">{ beerName }</h2>
+				<a className="wp-punk-api__beer-individual-link" href={ beerUrl } style={ { textAlign: textAlign } }>
+					<h2 className="wp-punk-api__beer-individual-title" style={ { textAlign: textAlign } }>{ beerName }</h2>
 				</a>
-				<p className="wp-punk-api__beer-individual-description">{ beerDescription }</p>
+				<p className="wp-punk-api__beer-individual-description" style={ { textAlign: textAlign } }>{ beerDescription }</p>
 			</div>
 		);
 	}
