@@ -3,10 +3,14 @@
  */
 import { __ } from "@wordpress/i18n"
 import { registerBlockType } from "@wordpress/blocks"
-import { withSelect } from "@wordpress/data"
-import { Fragment } from "@wordpress/element"
+import { PanelBody, PanelRow, SelectControl, Spinner } from "@wordpress/components"
+import { Fragment, useEffect, useState } from "@wordpress/element"
 import { InspectorControls } from "@wordpress/block-editor"
-import { PanelBody, PanelRow, SelectControl } from "@wordpress/components"
+
+/**
+ * Internal dependencies
+ */
+import BeerData from "../../components/beerData"
 
 /**
  * Register block
@@ -14,11 +18,11 @@ import { PanelBody, PanelRow, SelectControl } from "@wordpress/components"
 registerBlockType("wp-punk-api/beer-individual", {
 	title: __( "Individual Beer", "wp-punk-api" ),
 	description: __( "Display an individual beer from the Punk API", "wp-punk-api" ),
-	category: "custom",
+	category: "wp-punk-api",
 	icon: "beer",
-	keywords: ["beer", "punk api"],
+	keywords: ["beer", "individual", "punk api"],
 	supports: {
-		html: false,
+		html: true,
 	},
 	attributes: {
 		beerId: {
@@ -33,84 +37,92 @@ registerBlockType("wp-punk-api/beer-individual", {
 			type: "string",
 			default: "",
 		},
+		beerUrl: {
+			type: "string",
+			default: "",
+		}
 	},
-	edit: withSelect( ( select ) => {
-		let options = [];
-		const postType = 'beers'
-		const beersList = select( 'core' ).getEntityRecords( 'postType', postType, { 
-				'per_page': -1,
-				'orderby': 'title',
-				'order': 'asc',
-			}
-		);
+	edit: ( props ) => {
+		const { attributes, setAttributes } = props;
+		const { beerId, beerName, beerDescription } = attributes;
 
-		if ( beersList ) {
-			beersList.forEach( ( beer ) => {
-				options.push( {
-					value: beer.id,
-					label: beer.title.rendered,
-					title: beer.title.rendered,
-					content: beer.content.rendered,
-				} );
+		const beers = BeerData();
+		const [ beerData, setBeerData ] = useState();
+		const [ isLoading, setIsLoading ] = useState(true);
+
+		// Set the beer data once it's loaded
+		useEffect( () => { setBeerData( beers ); setIsLoading( false ); }, [ beers ] );
+
+		// If the data is loading, display a message
+		if ( isLoading && !beerData ) {
+			return (
+				<Fragment>
+					<p>
+						<Spinner />
+						{ __( "Fetching the beers...", "wp-punk-api" ) }
+					</p>
+				</Fragment>
+			);
+		}
+
+		// Set the default beer, wait for the data to load if it hasn't already
+		if ( !beerId ) {
+			setAttributes( {
+				beerId: beerData.beersList[0].value,
+				beerName: beerData.beersList[0].title,
+				beerDescription: beerData.beersList[0].description,
+				beerUrl: beerData.beersList[0].url,
 			} );
 		}
 
-		options.forEach( ( beer ) => {
-			beer.content = beer.content.replace( /(<([^>]+)>)/gi, "" );
-		} );
-
-		return {
-			beersList: options,
-		};
-
-	} )( ( props ) => {
-		const { attributes, setAttributes, beersList } = props;
-		let { beerId, beerName, beerDescription } = attributes;
-
-		const onChangeBeer = ( value ) => {
-			const beer = beersList.find( ( beer ) => beer.value === parseInt( value ) );
-			setAttributes( {
-				beerId: parseInt( value ),
-				beerName: beer.title,
-				beerDescription: beer.content,
+		// Set the beer data when the beer it's changed
+		const onBeerChange = ( beerId ) => {
+			beerData.beersList.forEach( beer => {
+				if ( beerId == beer.value ) {
+					setAttributes( {
+						beerId: beer.value,
+						beerName: beer.title,
+						beerDescription: beer.description,
+						beerUrl: beer.url,
+						beerImg: beer.img,
+					} );
+				}
 			} );
 		};
 
 		return (
 			<Fragment>
 				<InspectorControls>
-					<PanelBody title={ __( "Settings", "wp-punk-api" ) }>
+					<PanelBody title={ __( "Beer Settings", "wp-punk-api" ) }>
 						<PanelRow>
 							<SelectControl
-								label={ __( "Select a beer", "wp-punk-api" ) }
+								label={ __( "Select Beer", "wp-punk-api" ) }
 								value={ beerId }
-								options={ beersList }
-								onChange={ onChangeBeer }
+								options={ beerData.beersList }
+								onChange={ onBeerChange }
 							/>
 						</PanelRow>
 					</PanelBody>
 				</InspectorControls>
-				<section className={ props.className }>
-					<span className="dashicons dashicons-beer"></span>
-					<p>Beer ID: { beerId }</p>
-					<p>Beer Name: { beerName }</p>
-					<p>Beer Description: { beerDescription }</p>
-				</section>
+				<div className="wp-punk-api__beer-individual">
+					{ !beerName && <p>{ __( "Please select a beer...", "wp-punk-api" ) }</p> }
+					<h2 className="wp-punk-api__beer-individual-title">{ beerName }</h2>
+					<p className="wp-punk-api__beer-individual-description">{ beerDescription }</p>
+				</div>
 			</Fragment>
 		);
-	} ),
-
+	},
 	save: ( props ) => {
 		const { attributes } = props;
-		const { beerId, beerName, beerDescription } = attributes;
+		const { beerName, beerDescription, beerUrl } = attributes;
 
 		return (
-			<section className={ props.className }>
-				<span className="dashicons dashicons-beer"></span>
-				<p>Beer ID: { beerId }</p>
-				<p>Beer Name: { beerName }</p>
-				<p>Beer Description: { beerDescription }</p>
-			</section>
-		)
+			<div className="wp-punk-api__beer-individual">
+				<a href={ beerUrl } className="wp-punk-api__beer-individual-link">
+					<h2 className="wp-punk-api__beer-individual-title">{ beerName }</h2>
+				</a>
+				<p className="wp-punk-api__beer-individual-description">{ beerDescription }</p>
+			</div>
+		);
 	}
 } );
