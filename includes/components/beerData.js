@@ -17,6 +17,17 @@ const BeerData = () => {
 		'order': 'asc'
 	});
 
+	// Gutenberg editor get post featured image medium by id
+	const getPostFeaturedImage = ( id ) => {
+		const img = select( 'core' ).getMedia( id );
+		if ( img ) {
+			const sizes = img.media_details.sizes;
+			const medium = sizes.medium;
+			return medium.source_url;
+		}
+		return false;
+	}
+
 	// If there are beers, add them to the array
 	if ( beersList ) {
 		beersList.forEach( beer => {
@@ -26,13 +37,13 @@ const BeerData = () => {
 				title: beer.title.rendered,
 				description: beer.content.rendered,
 				url: beer.link,
+				img: getPostFeaturedImage( beer.featured_media )
 			} );
 		} );
 	}
 
+	// Remove HTML tags from the description
 	beers.forEach( beer => {
-		beer.label = beer.title;
-		beer.title = beer.title;
 		beer.description = beer.description.replace( /(<([^>]+)>)/ig, '' );
 	} );
 
