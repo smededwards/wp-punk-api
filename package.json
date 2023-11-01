@@ -9,8 +9,8 @@
 	},
   "main": "build/index.js",
   "scripts": {
-    "build": "wp-scripts build includes/blocks/index.js --output-path=build",
-    "start": "wp-scripts start includes/blocks/index.js --output-path=build",
+    "build": "wp-scripts build blocks/index.js --output-path=build",
+    "start": "wp-scripts start blocks/index.js --output-path=build",
 		"format": "wp-scripts format"
   },
   "devDependencies": {

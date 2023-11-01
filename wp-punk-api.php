@@ -34,16 +34,16 @@ define( 'WP_PUNK_API_TEXT_DOMAIN', 'wp-punk-api' );
 define( 'WP_PUNK_API_CLI_REST_SLUG', 'punk-api' );
 
 // Require plugin files
-require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api.php';
-require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api-blocks.php';
-require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api-cli.php';
-require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-wp-punk-api-cpt.php';
+require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-api.php';
+require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-blocks.php';
+require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-cli.php';
+require_once WP_PUNK_API_PLUGIN_DIR . 'includes/class-cpt.php';
 
 // Instantiate plugin classes
-$wp_punk_api        = new WP_Punk_API\WP_Punk_API();
-$wp_punk_api_blocks = new WP_Punk_API\WP_Punk_API_Blocks();
-$wp_punk_api_cli    = new WP_Punk_API\WP_Punk_API_CLI();
-$wp_punk_api_cpt    = new WP_Punk_API\WP_Punk_API_CPT();
+$wp_punk_api    = new WP_Punk_API\API();
+$wp_punk_blocks = new WP_Punk_API\Blocks();
+$wp_punk_cli    = new WP_Punk_API\CLI();
+$wp_punk_cpt    = new WP_Punk_API\CPT();
 
 // Register activation hook
 register_activation_hook( __FILE__, function() {

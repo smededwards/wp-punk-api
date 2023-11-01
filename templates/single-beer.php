@@ -2,7 +2,7 @@
 /**
  * The template for displaying single posts
  */
-$meta_prefix = \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE_SINGULAR;
+$meta_prefix  = \WP_Punk_API\CPT::POST_TYPE_SINGULAR;
 $tagline      = get_post_meta(get_the_ID(), $meta_prefix . '_tagline', true );
 $image_url    = get_post_meta(get_the_ID(), $meta_prefix . '_image_url', true );
 $abv          = get_post_meta(get_the_ID(), $meta_prefix . '_abv', true );

@@ -7,7 +7,7 @@ namespace WP_Punk_API;
  * 
  * Registers the API endpoints for the plugin
  */
-class WP_Punk_API {
+class API {
 
 	/**
 	 * Constants
@@ -20,7 +20,7 @@ class WP_Punk_API {
 		'ibu',
 		'food_pairing'
 	];
-	const BEER_META_PREFIX = \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE_SINGULAR;
+	const BEER_META_PREFIX = \WP_Punk_API\CPT::POST_TYPE_SINGULAR;
 	const REST_SLUG        = WP_PUNK_API_CLI_REST_SLUG;
 
 	/**
@@ -35,7 +35,7 @@ class WP_Punk_API {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			self::REST_SLUG, \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE, [
+			self::REST_SLUG, \WP_Punk_API\CPT::POST_TYPE, [
 				'methods'  => 'GET',
 				'callback' => [ $this, 'get_data' ],
 				'permission_callback' => '__return_true',
@@ -48,7 +48,7 @@ class WP_Punk_API {
 	 */
 	public function get_data() {
 		$api_url  = $_ENV['API_URL'];
-		$api_key  = \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE;
+		$api_key  = \WP_Punk_API\CPT::POST_TYPE;
 		$response = wp_remote_get( $api_url . $api_key );
 		$data     = json_decode( wp_remote_retrieve_body( $response ) );
 
@@ -67,7 +67,7 @@ class WP_Punk_API {
 
 			// Check if the post already exists
 			$beer_exists = new \WP_Query( [
-				'post_type'      => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
+				'post_type'      => \WP_Punk_API\CPT::POST_TYPE,
 				'post_title'     => $beer->name,
 				'posts_per_page' => -1,
 				'meta_key'       => $meta_prefix . '_id',
@@ -81,7 +81,7 @@ class WP_Punk_API {
 					'post_name'    => sanitize_title( $beer->id . '-' . $beer->name ),
 					'post_content' => $beer->description,
 					'post_status'  => 'publish',
-					'post_type'    => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
+					'post_type'    => \WP_Punk_API\CPT::POST_TYPE,
 				] );
 
 				// Add the meta data

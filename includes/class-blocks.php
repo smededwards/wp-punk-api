@@ -3,11 +3,11 @@
 namespace WP_Punk_API;
 
 /**
- * Class WP_Punk_API_Blocks
+ * Class Blocks
  * 
  * Registers the blocks for the plugin
  */
-class WP_Punk_API_Blocks {
+class Blocks {
 
 	/**
 	 * Constants
@@ -55,7 +55,7 @@ class WP_Punk_API_Blocks {
 	 */
 	public function allowed_block_types( $allowed_blocks ) {
 		// Only allow the paragraph block on the custom post type
-		if ( get_post_type() === WP_Punk_API_CPT::POST_TYPE ) {
+		if ( get_post_type() === CPT::POST_TYPE ) {
 			$allowed_blocks = [
 				'core/paragraph',
 			];
