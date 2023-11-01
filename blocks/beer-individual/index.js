@@ -135,7 +135,7 @@ registerBlockType("wp-punk-api/beer-individual", {
 					{ !beerName && <p>{ __( "Please select a beer...", "wp-punk-api" ) }</p> }
 					<h2 className="wp-punk-api__beer-individual-title" style={ { textAlign: textAlign } }>{ beerName }</h2>
 					{ beerImg && <img className="wp-punk-api__beer-individual-img" src={ beerImg } alt={ beerName } /> }
-					<p className="wp-punk-api__beer-individual-description" style={ { textAlign: textAlign } }>{ beerDescription }</p>
+					{ beerDescription && <p className="wp-punk-api__beer-individual-description" style={ { textAlign: textAlign } }>{ beerDescription }</p> }
 				</div>
 			</Fragment>
 		);
@@ -145,11 +145,11 @@ registerBlockType("wp-punk-api/beer-individual", {
 		const { beerName, beerDescription, beerImg, beerUrl, textAlign } = attributes;
 		return (
 			<div className="wp-punk-api__beer-individual">
-				<a className="wp-punk-api__beer-individual-link" href={ beerUrl } style={ { textAlign: textAlign } }>
-					<h2 className="wp-punk-api__beer-individual-title" style={ { textAlign: textAlign } }>{ beerName }</h2>
-					{ beerImg && <img className="wp-punk-api__beer-individual-img" src={ beerImg } alt={ beerName } /> }
+				<a href={ beerUrl } rel="noopener noreferrer" className="wp-punk-api__beer-individual-link">
+				{ beerName && <h2 className="wp-punk-api__beer-individual-title" style={ { textAlign: textAlign } }>{ beerName }</h2> }
 				</a>
-				<p className="wp-punk-api__beer-individual-description" style={ { textAlign: textAlign } }>{ beerDescription }</p>
+				{ beerImg && <img className="wp-punk-api__beer-individual-img" src={ beerImg } alt={ beerName } /> }
+				{ beerDescription && <p className="wp-punk-api__beer-individual-description" style={ { textAlign: textAlign } }>{ beerDescription }</p> }
 			</div>
 		);
 	}

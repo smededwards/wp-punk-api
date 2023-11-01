@@ -3,11 +3,11 @@
 namespace WP_Punk_API;
 
 /**
- * Class WP_Punk_API_CPT
+ * Class CPT
  * 
  * Registers the Custom Post Type for the plugin
  */
-class WP_Punk_API_CPT {
+class CPT {
 
 	/**
 	 * Constants
@@ -100,7 +100,7 @@ class WP_Punk_API_CPT {
 	 */
 	public function render_meta_boxes( $post ) {
 		// Get the fields
-		$fields      = \WP_Punk_API\WP_Punk_API::BEER_META_FIELDS;
+		$fields      = \WP_Punk_API\API::BEER_META_FIELDS;
 
 		// Set default field types
 		$field_types = [
@@ -129,7 +129,7 @@ class WP_Punk_API_CPT {
 		}
 
 		// Meta Prefix
-		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
+		$meta_prefix = \WP_Punk_API\API::BEER_META_PREFIX;
 		?>
 		<table class="form-table">
 			<?php foreach( $fields as $field ) : ?>
@@ -167,8 +167,8 @@ class WP_Punk_API_CPT {
 		}
 
 		// Save the fields
-		$fields = \WP_Punk_API\WP_Punk_API::BEER_META_FIELDS;
-		$meta_prefix = \WP_Punk_API\WP_Punk_API::BEER_META_PREFIX;
+		$fields = \WP_Punk_API\API::BEER_META_FIELDS;
+		$meta_prefix = \WP_Punk_API\API::BEER_META_PREFIX;
 
 		foreach( $fields as $field ) {
 			if ( isset( $_POST[ $field ] ) ) {
