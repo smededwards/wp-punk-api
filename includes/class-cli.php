@@ -3,11 +3,11 @@
 namespace WP_Punk_API;
 
 /**
- * Class WP_Punk_API_CLI
+ * Class CLI
  * 
  * Registers Command Line Interface commands for the plugin
  */
-class WP_Punk_API_CLI {
+class CLI {
 
 	/**
 	 * Constants
@@ -77,12 +77,12 @@ class WP_Punk_API_CLI {
 	public function delete_data() {
 		\WP_CLI::line( 'Deleting all Beers...' );
 
-		$post_count      = wp_count_posts( \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE );
-		$progress        = \WP_CLI\Utils\make_progress_bar( 'Generating Posts', $desired_posts );
+		$post_count    = wp_count_posts( \WP_Punk_API\CPT::POST_TYPE );
+		$progress      = \WP_CLI\Utils\make_progress_bar( 'Generating Posts', $desired_posts );
 		$posts_deleted = 0;
 
 		$beer_posts = new \WP_Query( [
-			'post_type'      => \WP_Punk_API\WP_Punk_API_CPT::POST_TYPE,
+			'post_type'      => \WP_Punk_API\CPT::POST_TYPE,
 			'posts_per_page' => -1,
 			'post_status'    => [ 'publish', 'trash' ]
 		] );
