@@ -12,6 +12,7 @@ import { AlignmentToolbar, BlockControls } from "@wordpress/block-editor"
  * Internal dependencies
  */
 import BeerData from "../../components/beerData"
+import beerIndividualIcon from "./beer-individual-icon"
 
 /**
  * Register block
@@ -20,7 +21,7 @@ registerBlockType("wp-punk-api/beer-individual", {
 	title: __( "Individual Beer", "wp-punk-api" ),
 	description: __( "Display an individual beer from the Punk API", "wp-punk-api" ),
 	category: "wp-punk-api",
-	icon: "beer",
+	icon: beerIndividualIcon,
 	keywords: ["beer", "individual", "punk api"],
 	supports: {
 		html: true,
