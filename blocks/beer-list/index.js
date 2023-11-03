@@ -9,6 +9,7 @@ import { Fragment, useEffect, useState } from "@wordpress/element"
  * Internal dependencies
  */
 import BeerData from "../../components/beerData"
+import beerListIcon from "./beer-list-icon"
 
 /**
  * Register block
@@ -17,7 +18,7 @@ registerBlockType("wp-punk-api/beer-list", {
 	title: __( "Beer List", "wp-punk-api" ),
 	description: __( "Display a list of beers from the Punk API", "wp-punk-api" ),
 	category: "wp-punk-api",
-	icon: "beer",
+	icon: beerListIcon,
 	keywords: ["beer", "list", "punk api"],
 	supports: {
 		html: true,

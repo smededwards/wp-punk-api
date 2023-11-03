@@ -68,14 +68,15 @@ class Blocks {
 	 * Custom block category
 	 */
 	public function custom_block_category( $categories, $post ) {
+		$category = [
+			'slug'  => self::BLOCK_NAMESPACE,
+			'title' => __( 'WP Punk API', WP_PUNK_API_TEXT_DOMAIN ),
+		];
+
+		// Merge the category into the array of categories
 		return array_merge(
 			$categories,
-			[
-				[
-					'slug'  => self::BLOCK_NAMESPACE,
-					'title' => __( 'WP Punk API', WP_PUNK_API_TEXT_DOMAIN ),
-				],
-			]
+			[ $category ]
 		);
 	}
 }

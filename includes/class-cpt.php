@@ -16,7 +16,7 @@ class CPT {
 	const POST_TYPE_SINGULAR      = 'beer';
 	const POST_TYPE_NAME          = 'Beers';
 	const POST_TYPE_NAME_SINGULAR = 'Beer';
-
+	const POST_TYPE_ICON          = 'punk-api.svg';
 	/**
 	 * Constructor
 	 */
@@ -59,7 +59,7 @@ class CPT {
 		$args = [
 			'labels'              => $labels,
 			'description'         => __( 'Custom Post Type for ' . $name, WP_PUNK_API_TEXT_DOMAIN ),
-			'menu_icon'           => 'dashicons-beer',
+			'menu_icon'           => 'data:image/svg+xml;base64,' . base64_encode( file_get_contents( WP_PUNK_API_PLUGIN_DIR . 'assets/' . self::POST_TYPE_ICON ) ),
 			'menu_position'       => 20,
 			'can_export'          => true,
 			'exclude_from_search' => false,
